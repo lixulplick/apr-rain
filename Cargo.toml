@@ -1,0 +1,15 @@
+[package]
+name = "apr-rain"
+version = "0.1.0"
+edition = "2021"
+description = "Matrix rain that reveals Alejandro Revilla's (jPOS/Transactility founder) headshot"
+license = "MIT"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+crossterm = "0.28"
+image = "0.25"
+rand = "0.8"
+
+[profile.release]
+lto = true
