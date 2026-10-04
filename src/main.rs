@@ -820,13 +820,16 @@ fn run_terminal(
 
     let frame_time = Duration::from_secs_f32(1.0 / args.fps.max(1.0));
     let start = Instant::now();
+    // sim clock: real elapsed time between frame starts, so the animation
+    // runs at true speed regardless of render/event-poll overhead
+    let mut last_step = Instant::now();
     let mut quit = false;
 
     'main: loop {
         let t0 = Instant::now();
 
-        // drain events
-        while poll(Duration::from_millis(1))? {
+        // drain events (poll in small slices for responsive input)
+        while poll(Duration::from_millis(2))? {
             match read()? {
                 Event::Key(_) => {
                     quit = true;
@@ -836,12 +839,15 @@ fn run_terminal(
                     cols = w;
                     rows = h;
                     sim = Sim::new(img, sidecar, args, cols as usize, rows as usize);
+                    last_step = Instant::now();
                 }
                 _ => {}
             }
         }
 
-        let dt = t0.elapsed().as_secs_f32().min(0.05);
+        let now = Instant::now();
+        let dt = now.duration_since(last_step).as_secs_f32().min(0.1);
+        last_step = now;
         if sim.step(dt, args.loops) {
             break;
         }

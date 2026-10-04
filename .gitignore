@@ -1,1 +1,7 @@
 /target
+# demo video build artifacts (scripts are tracked; media is not)
+/demo/frames/
+/demo/captured.pkl
+/demo/*.log
+/demo/demo-audio.m4a
+/demo.mp4
